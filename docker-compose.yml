@@ -40,7 +40,7 @@ services:
     # stdin_open: true  # docker run -i
     # tty: true         # docker run -t
     volumes:
-      - "./${local_pgadmin_data}/:${pgdata}"
+      - "./${local_pgadmin_data}/:${pgadmin_data}"
     env_file:
       - .env
     ports:
