@@ -1,9 +1,80 @@
-version: '2'
+# Use postgres/example user/password credentials
+version: '3.8'
+
+# https://stackoverflow.com/questions/68701716/docker-compose-postgres-connection-refused
+# https://stackoverflow.com/questions/41637505/how-to-persist-data-in-a-dockerized-postgres-database-using-volumes/41650891#41650891
 services:
   db:
-    build: ./
+    build:
+      context: '.'
+      dockerfile: './${postgres_build}/Dockerfile'
+      args:
+        postgres: "${image_name_db}:13"
+        relative_path: "${postgres_build}"
+    container_name: "${container_pg_name}"
+    restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: "${postgres_password}"
+#      POSTGRES_USER: "${postgres_user}"
+#      POSTGRES_DB: "${postgres_db}"
+      PGDATA: "${pgdata}"
+    # stdin_open: true  # docker run -i
+    # tty: true         # docker run -t
+    volumes:
+      - "./${local_pgdata}/:${pgdata}"
+    env_file:
+      - .env
     ports:
-      - '5432:5432'
+      - 5432:5432
+    networks:
+      lan:
+        ipv4_address: 100.5.0.2
+
+  adminer:
+    image: "${image_name_admin}:7"
+    container_name: "${container_pgadmin_name}"
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "${pgadmin_default_email}"
+      PGADMIN_DEFAULT_PASSWORD: "${pgadmin_default_password}"
+    # stdin_open: true  # docker run -i
+    # tty: true         # docker run -t
+    volumes:
+      - "./${local_pgadmin_data}/:${pgdata}"
+    env_file:
+      - .env
+    ports:
+      - 8000:80
+    networks:
+      lan:
+        ipv4_address: 100.5.0.3
+  
+  # https://hub.docker.com/r/flexberry/pentaho-official
+  pentahoserver:
+    build:
+      context: '.'
+      dockerfile: './${pentaho_build}/Dockerfile'
+      args:
+        relative_path: "${pentaho_build}"
+    container_name: "${container_pentaho_name}"
+    environment:
+      USERS: "${pentaho_user}"
+      ADMINPASSWORD: "${pentaho_password}"
+    volumes:
+      - "./data/pentaho/data-integration/:/opt/pentaho/data-integration"
+      - "./data/pentaho/pentaho-server/:/opt/pentaho/pentaho-server"
+    env_file:
+      - .env
+    ports:
+      - 8080:8080
+    networks:
+      lan:
+        ipv4_address: 100.5.0.4
+
+networks:
+  lan:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 100.5.0.0/24
+         gateway: 100.5.0.1
