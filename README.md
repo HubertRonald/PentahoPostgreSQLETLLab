@@ -32,7 +32,7 @@ The verified PostgreSQL bootstrap flow is illustrated below:
   <img
     src="./figs/verified_postgresql_bootstrap_flow.png"
     alt="Verified PostgreSQL bootstrap flow"
-    width="100%">
+    width="80%">
 </p>
 
 Pentaho Server is provisioned alongside the database environment, but no versioned project transformation/job currently proves a Pentaho-to-PostgreSQL ETL workflow.
