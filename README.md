@@ -26,36 +26,14 @@ The repository combines three concerns:
 2. **Database administration** — a Compose service configured with `PGADMIN_*` environment conventions and persistent local data.
 3. **Pentaho Server** — a legacy container build configured for Pentaho Server CE `9.4.0.0-343` on Ubuntu 18.04 with Java 8u201.
 
-The verified data bootstrap flow is:
+The verified PostgreSQL bootstrap flow is illustrated below:
 
-The verified PostgreSQL bootstrap flow is:
-
-```mermaid
-flowchart TB
-    A["📦 Microsoft AdventureWorks 2014<br/>OLTP archive"] --> B["💎 Ruby Compatibility Normalization<br/><code>update_csvs.rb</code>"]
-
-    B --> C["🗄️ PostgreSQL Bootstrap<br/><code>install.sh</code> + <code>install.sql</code>"]
-
-    C --> D[("🐘 PostgreSQL 13<br/>Adventureworks")]
-
-    D --> E["10 project schemas<br/>+ public"]
-    D --> F["68 tables"]
-    D --> G["87 views"]
-    D --> H["2 materialized views"]
-    D --> I["2 explicit indexes"]
-
-    classDef source fill:#eef6ff,stroke:#2563eb,stroke-width:2px,color:#172554;
-    classDef transform fill:#ecfdf3,stroke:#16a34a,stroke-width:2px,color:#14532d;
-    classDef bootstrap fill:#f5f3ff,stroke:#7c3aed,stroke-width:2px,color:#4c1d95;
-    classDef database fill:#fff7ed,stroke:#ea580c,stroke-width:2px,color:#7c2d12;
-    classDef object fill:#f8fafc,stroke:#94a3b8,stroke-width:1px,color:#334155;
-
-    class A source;
-    class B transform;
-    class C bootstrap;
-    class D database;
-    class E,F,G,H,I object;
-```
+<p align="center">
+  <img
+    src="./figs/verified_postgresql_bootstrap_flow.png"
+    alt="Verified PostgreSQL bootstrap flow"
+    width="100%">
+</p>
 
 Pentaho Server is provisioned alongside the database environment, but no versioned project transformation/job currently proves a Pentaho-to-PostgreSQL ETL workflow.
 
